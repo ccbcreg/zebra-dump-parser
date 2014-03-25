@@ -246,8 +246,9 @@ sub decode_mrt_packet {
 					if @{$attr->[BGP_ATTR_AS_PATH]};
 			} elsif ($format == 4) {
 			  
-			  
-				print "* " . inet_ntop($af, $prefix) . "/$prefixlen " . inet_ntoa($attr->[BGP_ATTR_NEXT_HOP]) . " ";
+        # This is part that tries to out put the MRT type file into something like the Cisco ip bgp dump
+        # That is what we can parse
+        print "* " . inet_ntop($af, $prefix) . "/$prefixlen " . inet_ntoa($attr->[BGP_ATTR_NEXT_HOP]) . " ";
 				if ($attr->[BGP_ATTR_MULTI_EXIT_DISC]) {
 				  print unpack('N', $attr->[BGP_ATTR_MULTI_EXIT_DISC]) . " ";
 				} else {
@@ -258,8 +259,11 @@ sub decode_mrt_packet {
 				}else{
 				  print "0 ";
 				}
-				print "0";
-        print print_aspath($attr->[BGP_ATTR_AS_PATH]) . " i\n" if @{$attr->[BGP_ATTR_AS_PATH]};
+				print "0"; # the path as an array starts with a space so it's ok to have no space here
+				if (@{$attr->[BGP_ATTR_AS_PATH]}){
+				  print print_aspath($attr->[BGP_ATTR_AS_PATH]);
+				}
+				print " i\n"
 				
 				
 			} else { die }
