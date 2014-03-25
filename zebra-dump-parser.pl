@@ -16,8 +16,8 @@ use strict;
 require 5.008;
 
 # only meaningful for message types TABLE_DUMP and TABLE_DUMP_V2
-# 1: verbose dump  2: AS path  3: origin AS
-my $format = 3;
+# 1: verbose dump  2: AS path  3: origin AS  4: Cisco like ip bgp dump
+my $format = 4;
 my $ignore_v6_routes = 1;
 
 ##############################################################################
@@ -244,6 +244,24 @@ sub decode_mrt_packet {
 						. unpack($BGP_Peers[$peer_index]->[4] == 2 ? 'n' : 'N',
 							origin_as($attr->[BGP_ATTR_AS_PATH])) . "\n"
 					if @{$attr->[BGP_ATTR_AS_PATH]};
+			} elsif ($format == 4) {
+			  
+			  
+				print "* " . inet_ntop($af, $prefix) . "/$prefixlen " . inet_ntoa($attr->[BGP_ATTR_NEXT_HOP]) . " ";
+				if ($attr->[BGP_ATTR_MULTI_EXIT_DISC]) {
+				  print unpack('N', $attr->[BGP_ATTR_MULTI_EXIT_DISC]) . " ";
+				} else {
+				  print "0 ";
+				}
+				if ($attr->[BGP_ATTR_LOCAL_PREF]) {
+				  print $attr->[BGP_ATTR_LOCAL_PREF] . " ";
+				}else{
+				  print "0 ";
+				}
+				print "0";
+        print print_aspath($attr->[BGP_ATTR_AS_PATH]) . " i\n" if @{$attr->[BGP_ATTR_AS_PATH]};
+				
+				
 			} else { die }
 		}
 
