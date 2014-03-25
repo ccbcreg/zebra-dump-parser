@@ -19,7 +19,7 @@ def create_log
     puts "Processing collector bview file: latest-bview#{collector}"
     system "cat latest-bview#{collector} | ./zebra-dump-parser.pl >> zebra.oix"
   end
-  system "cat zebra.oix | uniq > zebra.oix.uniq"
+  system "sort zebra.oix | uniq > zebra.oix.uniq"
 end
 
 create_log
